@@ -142,12 +142,51 @@ async function renderLogin() {
     const p = $('#senha').value;
     const remember = $('#remember').checked;
 
+<<<<<<< HEAD
     const lockUntil = JSON.parse(localStorage.getItem(STORAGE_KEYS.lockout) || '0');
     const now = Date.now();
     if (lockUntil && now < lockUntil) {
       const m = Math.ceil((lockUntil - now) / 60000);
       showLoginError(`Muitas tentativas. Tente novamente em ${m} min.`);
       return;
+=======
+        const lockUntil = JSON.parse(localStorage.getItem(STORAGE_KEYS.lockout) || '0');
+        const now = Date.now();
+        if (lockUntil && now < lockUntil) {
+            const m = Math.ceil((lockUntil - now) / 60000);
+            showLoginError(`Muitas tentativas. Tente novamente em ${m} min.`);
+            return;
+        }
+
+        const btn = $('#btnLogin');
+        const original = btn.innerHTML; btn.disabled = true; btn.innerHTML = '<span class="loader" aria-hidden="true"></span><span> Verificando…</span>';
+        await sleep(600);
+
+        const users = getUsers();
+        const found = users.find(x => x.username === u && x.password === p);
+        if (found) {
+            setSession({ username: found.username, role: found.role, email: found.email }, remember);
+            localStorage.removeItem(STORAGE_KEYS.failed);
+            localStorage.removeItem(STORAGE_KEYS.lockout);
+            toast('Login bem-sucedido');
+            navigate('#/dashboard');
+        } else {
+            const failed = (JSON.parse(localStorage.getItem(STORAGE_KEYS.failed) || '0') || 0) + 1;
+            localStorage.setItem(STORAGE_KEYS.failed, JSON.stringify(failed));
+            if (failed >= 5) {
+                const until = Date.now() + 5 * 60 * 1000;
+                localStorage.setItem(STORAGE_KEYS.lockout, JSON.stringify(until));
+                showLoginError('Muitas tentativas. Tente novamente em 5 min.');
+            } else {
+                showLoginError('Usuário ou senha incorretos.');
+            }
+        }
+        btn.disabled = false; btn.innerHTML = original;
+    });
+
+    function showLoginError(msg) {
+        const box = $('#loginMsg'); box.style.display = 'block'; box.textContent = msg;
+>>>>>>> refs/remotes/origin/main
     }
 
     const btn = $('#btnLogin');
@@ -221,6 +260,7 @@ async function renderRegister() {
     const pw = $('#rpass').value;
     const role = $('#rrole').value;
 
+<<<<<<< HEAD
     // CORREÇÃO: Validação de senha forte
     // Requer: 8+ chars, 1 maiúscula (A-Z), 1 número (0-9)
     const strongPasswordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
@@ -228,6 +268,26 @@ async function renderRegister() {
       show('A senha deve possuir 8 letras sendo 1 maiúscula e 1 número.'); return;
     }
 
+=======
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(em)) {
+          show('E-mail inválido. Verifique se contém "@" e um domínio (ex: usuario@dominio.com).');
+          return;
+    }
+
+        // Validação de senha forte 
+        // Requer: 8+ caracteres, 1 maiúscula (A-Z), 1 número (0-9)
+        const strongPasswordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
+        if (!strongPasswordRegex.test(pw)) {
+            show('A senha deve ter pelo menos 8 caracteres sendo 1 maiúscula e 1 número.'); return;
+        }
+
+        const users = getUsers();
+        // Verificar duplicidade de email e username
+        if (users.some(x => x.username === u || x.email === em)) {
+            show('E-mail ou usuário já em uso.'); return;
+        }
+>>>>>>> refs/remotes/origin/main
 
     const users = getUsers();
     if (users.some(x => x.username === u || x.email === em)) {
