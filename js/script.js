@@ -100,9 +100,13 @@ async function renderLogin() {
               <label for="usuario">Usuário</label>
               <input id="usuario" name="usuario" class="input" required aria-required="true" />
             </div>
-            <div class="row">
+            <div class="row" style="position: relative;">
               <label for="senha">Senha</label>
               <input id="senha" name="senha" type="password" class="input" required aria-required="true" />
+              <button type="button" id="toggleSenha"
+                      style="position:absolute; right:8px; top:30px; background:none; border:none; cursor:pointer; color:#666;">
+                👁️
+              </button>
             </div>
             <div class="toolbar" style="justify-content: space-between;">
               <label style="display:inline-flex; align-items:center; gap:8px;">
@@ -155,7 +159,7 @@ async function renderLogin() {
         await sleep(600);
 
         const users = getUsers();
-        const found = users.find(x => x.username === u && x.password === p);
+        const found = users.find(x => (x.username === u || x.email === u) && x.password === p);
         if (found) {
             setSession({ username: found.username, role: found.role, email: found.email }, remember);
             localStorage.removeItem(STORAGE_KEYS.failed);
@@ -174,6 +178,14 @@ async function renderLogin() {
             }
         }
         btn.disabled = false; btn.innerHTML = original;
+    });
+
+    // Botão de mostrar/ocultar senha
+    $('#toggleSenha').addEventListener('click', () => {
+        const input = $('#senha');
+        const isHidden = input.type === 'password';
+        input.type = isHidden ? 'text' : 'password';
+        $('#toggleSenha').textContent = isHidden ? '🙈' : '👁️';
     });
 
     function showLoginError(msg) {
