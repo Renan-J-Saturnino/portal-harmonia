@@ -166,7 +166,6 @@ async function renderLogin() {
             const failed = (JSON.parse(localStorage.getItem(STORAGE_KEYS.failed) || '0') || 0) + 1;
             localStorage.setItem(STORAGE_KEYS.failed, JSON.stringify(failed));
             if (failed >= 5) {
-                // CORREÇÃO: 5 minutos (PDF item 4.3), estava 10 minutos
                 const until = Date.now() + 5 * 60 * 1000;
                 localStorage.setItem(STORAGE_KEYS.lockout, JSON.stringify(until));
                 showLoginError('Muitas tentativas. Tente novamente em 5 min.');
@@ -221,15 +220,21 @@ async function renderRegister() {
         const pw = $('#rpass').value;
         const role = $('#rrole').value;
 
-        // CORREÇÃO: Validação de senha forte (PDF item 4.3 - senha fraca aceita)
-        // Requer: 8+ chars, 1 maiúscula (A-Z), 1 número (0-9)
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(em)) {
+          show('E-mail inválido. Verifique se contém "@" e um domínio (ex: usuario@dominio.com).');
+          return;
+    }
+
+        // Validação de senha forte 
+        // Requer: 8+ caracteres, 1 maiúscula (A-Z), 1 número (0-9)
         const strongPasswordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
         if (!strongPasswordRegex.test(pw)) {
-            show('A senha deve ter ≥ 8 chars, 1 maiúscula e 1 número.'); return;
+            show('A senha deve ter pelo menos 8 caracteres sendo 1 maiúscula e 1 número.'); return;
         }
 
         const users = getUsers();
-        // CORREÇÃO: Verificar duplicidade de email (PDF item 4.2.1) E username
+        // Verificar duplicidade de email e username
         if (users.some(x => x.username === u || x.email === em)) {
             show('E-mail ou usuário já em uso.'); return;
         }
