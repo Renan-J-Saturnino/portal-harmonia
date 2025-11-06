@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Portal Harmonia — App de Teste</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
   <header class="appbar" role="banner">
     <div class="inner">
@@ -27,9 +29,9 @@
 
   <script>
     // ------------------ UTIL ------------------
-    const $ = (sel, root=document) => root.querySelector(sel);
-    const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
-    const sleep = (ms)=> new Promise(r=>setTimeout(r, ms));
+    const $ = (sel, root = document) => root.querySelector(sel);
+    const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+    const sleep = (ms) => new Promise(r => setTimeout(r, ms));
 
     const STORAGE_KEYS = {
       users: 'ph_users',
@@ -39,55 +41,55 @@
       products: 'ph_products'
     };
 
-    function getUsers(){
+    function getUsers() {
       const base = [
-        {username:'admin', password:'1234', role:'administrador', email:'admin@harmonia.app'},
-        {username:'oper', password:'1234', role:'operacional', email:'oper@harmonia.app'}
+        { username: 'admin', password: '1234', role: 'administrador', email: 'admin@harmonia.app' },
+        { username: 'oper', password: '1234', role: 'operacional', email: 'oper@harmonia.app' }
       ];
-      const data = JSON.parse(localStorage.getItem(STORAGE_KEYS.users)||'null');
-      if(!data){ localStorage.setItem(STORAGE_KEYS.users, JSON.stringify(base)); return base; }
+      const data = JSON.parse(localStorage.getItem(STORAGE_KEYS.users) || 'null');
+      if (!data) { localStorage.setItem(STORAGE_KEYS.users, JSON.stringify(base)); return base; }
       return data;
     }
-    function setUsers(arr){ localStorage.setItem(STORAGE_KEYS.users, JSON.stringify(arr)); }
+    function setUsers(arr) { localStorage.setItem(STORAGE_KEYS.users, JSON.stringify(arr)); }
 
-    function getProducts(){
-      const seed=[
-        {id: crypto.randomUUID(), name:'Café Premium', price:19.90, stock:50},
-        {id: crypto.randomUUID(), name:'Chá Verde', price:12.50, stock:80}
+    function getProducts() {
+      const seed = [
+        { id: crypto.randomUUID(), name: 'Café Premium', price: 19.90, stock: 50 },
+        { id: crypto.randomUUID(), name: 'Chá Verde', price: 12.50, stock: 80 }
       ];
-      const data = JSON.parse(localStorage.getItem(STORAGE_KEYS.products)||'null');
-      if(!data){ localStorage.setItem(STORAGE_KEYS.products, JSON.stringify(seed)); return seed; }
+      const data = JSON.parse(localStorage.getItem(STORAGE_KEYS.products) || 'null');
+      if (!data) { localStorage.setItem(STORAGE_KEYS.products, JSON.stringify(seed)); return seed; }
       return data;
     }
-    function setProducts(arr){ localStorage.setItem(STORAGE_KEYS.products, JSON.stringify(arr)); }
+    function setProducts(arr) { localStorage.setItem(STORAGE_KEYS.products, JSON.stringify(arr)); }
 
-    function getSession(){
+    function getSession() {
       const s = sessionStorage.getItem(STORAGE_KEYS.session) || localStorage.getItem(STORAGE_KEYS.session);
       return s ? JSON.parse(s) : null;
     }
-    function setSession(sess, remember){
+    function setSession(sess, remember) {
       const str = JSON.stringify(sess);
       // CORREÇÃO: Usar localStorage se 'remember' for true, senão sessionStorage
-      sessionStorage.removeItem(STORAGE_KEYS.session); 
+      sessionStorage.removeItem(STORAGE_KEYS.session);
       localStorage.removeItem(STORAGE_KEYS.session);
-      
+
       if (remember) {
         localStorage.setItem(STORAGE_KEYS.session, str);
       } else {
         sessionStorage.setItem(STORAGE_KEYS.session, str);
       }
     }
-    function clearSession(){ sessionStorage.removeItem(STORAGE_KEYS.session); localStorage.removeItem(STORAGE_KEYS.session); }
+    function clearSession() { sessionStorage.removeItem(STORAGE_KEYS.session); localStorage.removeItem(STORAGE_KEYS.session); }
 
-    function toast(msg){
+    function toast(msg) {
       const t = $('#toast');
       t.textContent = msg; t.classList.add('show');
-      setTimeout(()=> t.classList.remove('show'), 2500);
+      setTimeout(() => t.classList.remove('show'), 2500);
     }
 
-    function setRoleChip(role){
+    function setRoleChip(role) {
       const chip = $('#roleChip');
-      if(role){ chip.textContent = role; chip.style.display = 'inline-flex'; }
+      if (role) { chip.textContent = role; chip.style.display = 'inline-flex'; }
       else chip.style.display = 'none';
     }
 
@@ -98,11 +100,11 @@
       '#/dashboard': renderDashboard
     };
 
-    function navigate(hash){ location.hash = hash; }
+    function navigate(hash) { location.hash = hash; }
 
     window.addEventListener('hashchange', () => mount());
 
-    async function mount(){
+    async function mount() {
       const sess = getSession();
       $('#btnGoLogin').style.display = sess ? 'none' : 'inline-flex';
       $('#btnLogout').style.display = sess ? 'inline-flex' : 'none';
@@ -113,7 +115,7 @@
     }
 
     // --------------- VIEWS ---------------
-    async function renderLogin(){
+    async function renderLogin() {
       const el = document.getElementById('app');
       el.innerHTML = `
       <div class="grid cols-2">
@@ -161,18 +163,18 @@
         </section>
       </div>`;
 
-      $('#toRegister').addEventListener('click', ()=> navigate('#/register'));
+      $('#toRegister').addEventListener('click', () => navigate('#/register'));
 
-      $('#formLogin').addEventListener('submit', async (e)=>{
+      $('#formLogin').addEventListener('submit', async (e) => {
         e.preventDefault();
         const u = $('#usuario').value.trim();
         const p = $('#senha').value;
         const remember = $('#remember').checked;
 
-        const lockUntil = JSON.parse(localStorage.getItem(STORAGE_KEYS.lockout)||'0');
+        const lockUntil = JSON.parse(localStorage.getItem(STORAGE_KEYS.lockout) || '0');
         const now = Date.now();
-        if(lockUntil && now < lockUntil){
-          const m = Math.ceil((lockUntil-now)/60000);
+        if (lockUntil && now < lockUntil) {
+          const m = Math.ceil((lockUntil - now) / 60000);
           showLoginError(`Muitas tentativas. Tente novamente em ${m} min.`);
           return;
         }
@@ -182,19 +184,19 @@
         await sleep(600);
 
         const users = getUsers();
-        const found = users.find(x=> x.username===u && x.password===p);
-        if(found){
-          setSession({username: found.username, role: found.role, email: found.email}, remember);
+        const found = users.find(x => x.username === u && x.password === p);
+        if (found) {
+          setSession({ username: found.username, role: found.role, email: found.email }, remember);
           localStorage.removeItem(STORAGE_KEYS.failed);
           localStorage.removeItem(STORAGE_KEYS.lockout);
           toast('Login bem-sucedido');
           navigate('#/dashboard');
         } else {
-          const failed = (JSON.parse(localStorage.getItem(STORAGE_KEYS.failed)||'0') || 0) + 1;
+          const failed = (JSON.parse(localStorage.getItem(STORAGE_KEYS.failed) || '0') || 0) + 1;
           localStorage.setItem(STORAGE_KEYS.failed, JSON.stringify(failed));
-          if(failed >= 5){
+          if (failed >= 5) {
             // CORREÇÃO: 5 minutos (PDF item 4.3), estava 10 minutos
-            const until = Date.now() + 5*60*1000; 
+            const until = Date.now() + 5 * 60 * 1000;
             localStorage.setItem(STORAGE_KEYS.lockout, JSON.stringify(until));
             showLoginError('Muitas tentativas. Tente novamente em 5 min.');
           } else {
@@ -204,14 +206,14 @@
         btn.disabled = false; btn.innerHTML = original;
       });
 
-      function showLoginError(msg){
-        const box = $('#loginMsg'); box.style.display='block'; box.textContent = msg;
+      function showLoginError(msg) {
+        const box = $('#loginMsg'); box.style.display = 'block'; box.textContent = msg;
       }
 
       $('#usuario').focus();
     }
 
-    async function renderRegister(){
+    async function renderRegister() {
       const el = document.getElementById('app');
       el.innerHTML = `
       <div class="layout">
@@ -241,7 +243,7 @@
         </section>
       </div>`;
 
-      $('#formReg').addEventListener('submit', (e)=>{
+      $('#formReg').addEventListener('submit', (e) => {
         e.preventDefault();
         const u = $('#ruser').value.trim();
         const em = $('#remail').value.trim();
@@ -251,30 +253,30 @@
         // CORREÇÃO: Validação de senha forte (PDF item 4.3 - senha fraca aceita)
         // Requer: 8+ chars, 1 maiúscula (A-Z), 1 número (0-9)
         const strongPasswordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
-        if(!strongPasswordRegex.test(pw)){
+        if (!strongPasswordRegex.test(pw)) {
           show('A senha deve ter ≥ 8 chars, 1 maiúscula e 1 número.'); return;
         }
 
         const users = getUsers();
         // CORREÇÃO: Verificar duplicidade de email (PDF item 4.2.1) E username
-        if(users.some(x=> x.username===u || x.email===em)){
+        if (users.some(x => x.username === u || x.email === em)) {
           show('E-mail ou usuário já em uso.'); return;
         }
 
-        users.push({username:u, email:em, password:pw, role});
+        users.push({ username: u, email: em, password: pw, role });
         setUsers(users);
         toast('Cadastro realizado. Faça login.');
         navigate('#/login');
 
-        function show(msg){ const box=$('#regMsg'); box.style.display='block'; box.textContent=msg; }
+        function show(msg) { const box = $('#regMsg'); box.style.display = 'block'; box.textContent = msg; }
       });
 
       $('#ruser').focus();
     }
 
-    async function renderDashboard(){
+    async function renderDashboard() {
       const sess = getSession();
-      if(!sess){ navigate('#/login'); return; }
+      if (!sess) { navigate('#/login'); return; }
 
       const el = document.getElementById('app');
       el.innerHTML = `
@@ -305,7 +307,7 @@
       await renderProducts();
     }
 
-    async function renderAbout(){
+    async function renderAbout() {
       $('#view').innerHTML = `
         <section class="card stack">
           <h2>Sobre o Portal Harmonia</h2>
@@ -317,7 +319,7 @@
         </section>`;
     }
 
-    async function renderProducts(){
+    async function renderProducts() {
       const sess = getSession();
       const role = sess?.role;
       const container = $('#view');
@@ -342,12 +344,12 @@
       $('#q').addEventListener('input', drawTable);
       $('#new').addEventListener('click', openFormCreate);
 
-      function drawTable(){
+      function drawTable() {
         const q = $('#q').value?.toLowerCase() || '';
         const data = getProducts().filter(p => p.name.toLowerCase().includes(q));
         const wrap = $('#tableWrap');
-        if(!data.length){ wrap.innerHTML = '<p class="footer-note">Nenhum produto encontrado.</p>'; return; }
-        const rows = data.map(p=> `
+        if (!data.length) { wrap.innerHTML = '<p class="footer-note">Nenhum produto encontrado.</p>'; return; }
+        const rows = data.map(p => `
           <tr>
             <td>${p.name}</td>
             <td>R$ ${p.price.toFixed(2)}</td>
@@ -362,26 +364,26 @@
             <thead><tr><th>Nome</th><th>Preço</th><th>Estoque</th><th>Ações</th></tr></thead>
             <tbody>${rows}</tbody>
           </table>`;
-        $$('button[data-edit]').forEach(b=> b.addEventListener('click', ()=> openFormEdit(b.dataset.edit)));
-        $$('button[data-del]').forEach(b=> b.addEventListener('click', ()=> del(b.dataset.del)));
+        $$('button[data-edit]').forEach(b => b.addEventListener('click', () => openFormEdit(b.dataset.edit)));
+        $$('button[data-del]').forEach(b => b.addEventListener('click', () => del(b.dataset.del)));
       }
 
-      function openFormCreate(){ openForm(); }
-      function openFormEdit(id){
-        const p = getProducts().find(x=> x.id===id); openForm(p);
+      function openFormCreate() { openForm(); }
+      function openFormEdit(id) {
+        const p = getProducts().find(x => x.id === id); openForm(p);
       }
 
-      function openForm(prod){
+      function openForm(prod) {
         const isEdit = !!prod;
         const dlg = document.createElement('div');
         dlg.innerHTML = `
           <div class="card stack" style="position:fixed; inset:0; background: rgba(0,0,0,.35); display:grid; place-items:center; padding:16px;">
             <div class="card stack" style="max-width:520px; width:100%;">
-              <h3>${isEdit? 'Editar' : 'Novo'} produto</h3>
+              <h3>${isEdit ? 'Editar' : 'Novo'} produto</h3>
               <div class="grid cols-2">
-                <div class="row"><label for="pname">Nome</label><input id="pname" class="input" value="${prod?.name||''}"></div>
-                <div class="row"><label for="pprice">Preço</label><input id="pprice" class="input" type="number" step="0.01" value="${prod?.price||''}"></div>
-                <div class="row"><label for="pstock">Estoque</label><input id="pstock" class="input" type="number" step="1" value="${prod?.stock||''}"></div>
+                <div class="row"><label for="pname">Nome</label><input id="pname" class="input" value="${prod?.name || ''}"></div>
+                <div class="row"><label for="pprice">Preço</label><input id="pprice" class="input" type="number" step="0.01" value="${prod?.price || ''}"></div>
+                <div class="row"><label for="pstock">Estoque</label><input id="pstock" class="input" type="number" step="1" value="${prod?.stock || ''}"></div>
               </div>
               <div class="toolbar" style="justify-content:flex-end;">
                 <button class="btn neutral" id="cancel">Cancelar</button>
@@ -392,43 +394,44 @@
           </div>`;
         document.body.appendChild(dlg);
         $('#pname', dlg).focus();
-        $('#cancel', dlg).addEventListener('click', ()=> dlg.remove());
-        $('#save', dlg).addEventListener('click', async ()=>{
+        $('#cancel', dlg).addEventListener('click', () => dlg.remove());
+        $('#save', dlg).addEventListener('click', async () => {
           const name = $('#pname', dlg).value.trim();
           const price = parseFloat($('#pprice', dlg).value);
           const stock = parseInt($('#pstock', dlg).value, 10);
-          if(!name){ show('Nome é obrigatório.'); return; }
+          if (!name) { show('Nome é obrigatório.'); return; }
           // CORREÇÃO: Preço negativo (PDF item 3.2.3). Deve ser >= 0.
-          if(price < 0 || isNaN(price)){ show('Preço deve ser zero ou positivo.'); return; }
-          if(!(Number.isInteger(stock) && stock>=0)){ show('Estoque deve ser inteiro ≥ 0.'); return; }
+          if (price < 0 || isNaN(price)) { show('Preço deve ser zero ou positivo.'); return; }
+          if (!(Number.isInteger(stock) && stock >= 0)) { show('Estoque deve ser inteiro ≥ 0.'); return; }
           $('#save', dlg).disabled = true; $('#save', dlg).innerHTML = '<span class="loader" aria-hidden="true"></span> Salvando…';
           await sleep(400);
           const all = getProducts();
-          if(isEdit){
-            const idx = all.findIndex(x=> x.id===prod.id);
-            all[idx] = {...all[idx], name, price, stock};
+          if (isEdit) {
+            const idx = all.findIndex(x => x.id === prod.id);
+            all[idx] = { ...all[idx], name, price, stock };
           } else {
-            all.unshift({id: crypto.randomUUID(), name, price, stock});
+            all.unshift({ id: crypto.randomUUID(), name, price, stock });
           }
-          setProducts(all); toast(isEdit? 'Produto atualizado' : 'Produto criado');
+          setProducts(all); toast(isEdit ? 'Produto atualizado' : 'Produto criado');
           dlg.remove(); drawTable();
-          function show(msg){ const m=$('#formMsg', dlg); m.style.display='block'; m.textContent=msg; $('#save', dlg).disabled=false; $('#save', dlg).textContent='Salvar'; }
+          function show(msg) { const m = $('#formMsg', dlg); m.style.display = 'block'; m.textContent = msg; $('#save', dlg).disabled = false; $('#save', dlg).textContent = 'Salvar'; }
         });
       }
 
-      async function del(id){
-        if(!confirm('Confirma excluir o produto?')) return;
-        const all = getProducts().filter(x=> x.id!==id);
+      async function del(id) {
+        if (!confirm('Confirma excluir o produto?')) return;
+        const all = getProducts().filter(x => x.id !== id);
         setProducts(all); toast('Produto removido'); drawTable();
       }
     }
 
     // --------------- NAV BAR CONTROLS ---------------
-    $('#btnGoLogin').addEventListener('click', ()=> navigate('#/login'));
-    $('#btnLogout').addEventListener('click', ()=>{ clearSession(); setRoleChip(null); toast('Sessão encerrada'); navigate('#/login'); });
+    $('#btnGoLogin').addEventListener('click', () => navigate('#/login'));
+    $('#btnLogout').addEventListener('click', () => { clearSession(); setRoleChip(null); toast('Sessão encerrada'); navigate('#/login'); });
 
     // Mount first view
     mount();
   </script>
 </body>
+
 </html>
