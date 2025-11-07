@@ -11,7 +11,7 @@
 | **Disciplina:** | Manutenção de Sistemas |
 | **Título:** | Relatório de Melhoria Contínua: Aplicando o Ciclo PDCA ao Portal Harmonia |
 | **Professor(a):** | Anderson Alves |
-| **Aluno:** | Renan J. Saturnino Braga |
+| **Alunos:** | Renan J. Saturnino Braga , Átila Silva Barbosa FIlho|
 | **Turma:** | G91210 |
 | **Turno:** | Matutino |
 | **Data:** | 02/11/2025 |
