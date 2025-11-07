@@ -89,8 +89,8 @@ async function mount() {
 async function renderLogin() {
     const el = document.getElementById('app');
     el.innerHTML = `
-      <div class="grid cols-2">
-        <section class="card stack" aria-labelledby="loginTitle">
+      <div class="container__login">
+        <section class="card stack container__login" aria-labelledby="loginTitle">
           <div>
             <h1 id="loginTitle">Bem-vindo ao Portal Harmonia</h1>
             <p class="footer-note">Faça login para acessar o Dashboard de Produtos. Design acessível, rápido e harmonioso nas cores.</p>

@@ -97,6 +97,11 @@
      gap: 16px;
  }
 
+    .container__login {
+        width: 500px;
+        margin: 60px auto;
+    }
+
  @media (min-width: 900px) {
      .grid.cols-2 {
          grid-template-columns: 1fr 1fr;
