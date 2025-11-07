@@ -146,6 +146,11 @@ async function renderLogin() {
         const p = $('#senha').value;
         const remember = $('#remember').checked;
 
+        if (!u || !p) {
+          showLoginError('Preencher campos obrigatórios.');
+          return;
+        }
+
         const lockUntil = JSON.parse(localStorage.getItem(STORAGE_KEYS.lockout) || '0');
         const now = Date.now();
         if (lockUntil && now < lockUntil) {
@@ -231,6 +236,11 @@ async function renderRegister() {
         const em = $('#remail').value.trim();
         const pw = $('#rpass').value;
         const role = $('#rrole').value;
+
+        if (!u || !em || !pw) {
+          show('Preencher campos obrigatórios.');
+          return;
+        }
 
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(em)) {
