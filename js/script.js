@@ -389,7 +389,7 @@ async function renderProducts() {
             const stock = parseInt($('#pstock', dlg).value, 10);
             if (!name) { show('Nome é obrigatório.'); return; }
             // CORREÇÃO: Preço negativo (PDF item 3.2.3). Deve ser >= 0.
-            if (price < 0 || isNaN(price)) { show('Preço deve ser zero ou positivo.'); return; }
+            if (price <= 0 || isNaN(price)) { show('Preço deve ser positivo.'); return; }
             if (!(Number.isInteger(stock) && stock >= 0)) { show('Estoque deve ser inteiro ≥ 0.'); return; }
             $('#save', dlg).disabled = true; $('#save', dlg).innerHTML = '<span class="loader" aria-hidden="true"></span> Salvando…';
             await sleep(400);
