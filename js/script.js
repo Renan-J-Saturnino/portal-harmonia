@@ -5,70 +5,70 @@ const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
 const sleep = (ms) => new Promise(r => setTimeout(r, ms));
 
 const STORAGE_KEYS = {
-  users: 'ph_users',
-  session: 'ph_session',
-  failed: 'ph_failed_attempts',
-  lockout: 'ph_lockout_until',
-  products: 'ph_products'
+    users: 'ph_users',
+    session: 'ph_session',
+    failed: 'ph_failed_attempts',
+    lockout: 'ph_lockout_until',
+    products: 'ph_products'
 };
 
 function getUsers() {
-  const base = [
-    { username: 'admin', password: '1234', role: 'administrador', email: 'admin@harmonia.app' },
-    { username: 'oper', password: '1234', role: 'operacional', email: 'oper@harmonia.app' }
-  ];
-  const data = JSON.parse(localStorage.getItem(STORAGE_KEYS.users) || 'null');
-  if (!data) { localStorage.setItem(STORAGE_KEYS.users, JSON.stringify(base)); return base; }
-  return data;
+    const base = [
+        { username: 'admin', password: '1234', role: 'administrador', email: 'admin@harmonia.app' },
+        { username: 'oper', password: '1234', role: 'operacional', email: 'oper@harmonia.app' }
+    ];
+    const data = JSON.parse(localStorage.getItem(STORAGE_KEYS.users) || 'null');
+    if (!data) { localStorage.setItem(STORAGE_KEYS.users, JSON.stringify(base)); return base; }
+    return data;
 }
 function setUsers(arr) { localStorage.setItem(STORAGE_KEYS.users, JSON.stringify(arr)); }
 
 function getProducts() {
-  const seed = [
-    { id: crypto.randomUUID(), name: 'Café Premium', price: 19.90, stock: 50 },
-    { id: crypto.randomUUID(), name: 'Chá Verde', price: 12.50, stock: 80 }
-  ];
-  const data = JSON.parse(localStorage.getItem(STORAGE_KEYS.products) || 'null');
-  if (!data) { localStorage.setItem(STORAGE_KEYS.products, JSON.stringify(seed)); return seed; }
-  return data;
+    const seed = [
+        { id: crypto.randomUUID(), name: 'Café Premium', price: 19.90, stock: 50 },
+        { id: crypto.randomUUID(), name: 'Chá Verde', price: 12.50, stock: 80 }
+    ];
+    const data = JSON.parse(localStorage.getItem(STORAGE_KEYS.products) || 'null');
+    if (!data) { localStorage.setItem(STORAGE_KEYS.products, JSON.stringify(seed)); return seed; }
+    return data;
 }
 function setProducts(arr) { localStorage.setItem(STORAGE_KEYS.products, JSON.stringify(arr)); }
 
 function getSession() {
-  const s = sessionStorage.getItem(STORAGE_KEYS.session) || localStorage.getItem(STORAGE_KEYS.session);
-  return s ? JSON.parse(s) : null;
+    const s = sessionStorage.getItem(STORAGE_KEYS.session) || localStorage.getItem(STORAGE_KEYS.session);
+    return s ? JSON.parse(s) : null;
 }
 function setSession(sess, remember) {
-  const str = JSON.stringify(sess);
-  // CORREÇÃO: Usar localStorage se 'remember' for true, senão sessionStorage
-  sessionStorage.removeItem(STORAGE_KEYS.session);
-  localStorage.removeItem(STORAGE_KEYS.session);
+    const str = JSON.stringify(sess);
+    // CORREÇÃO: Usar localStorage se 'remember' for true, senão sessionStorage
+    sessionStorage.removeItem(STORAGE_KEYS.session);
+    localStorage.removeItem(STORAGE_KEYS.session);
 
-  if (remember) {
-    localStorage.setItem(STORAGE_KEYS.session, str);
-  } else {
-    sessionStorage.setItem(STORAGE_KEYS.session, str);
-  }
+    if (remember) {
+        localStorage.setItem(STORAGE_KEYS.session, str);
+    } else {
+        sessionStorage.setItem(STORAGE_KEYS.session, str);
+    }
 }
 function clearSession() { sessionStorage.removeItem(STORAGE_KEYS.session); localStorage.removeItem(STORAGE_KEYS.session); }
 
 function toast(msg) {
-  const t = $('#toast');
-  t.textContent = msg; t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2500);
+    const t = $('#toast');
+    t.textContent = msg; t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
 }
 
 function setRoleChip(role) {
-  const chip = $('#roleChip');
-  if (role) { chip.textContent = role; chip.style.display = 'inline-flex'; }
-  else chip.style.display = 'none';
+    const chip = $('#roleChip');
+    if (role) { chip.textContent = role; chip.style.display = 'inline-flex'; }
+    else chip.style.display = 'none';
 }
 
 // --------------- ROUTER ---------------
 const routes = {
-  '#/login': renderLogin,
-  '#/register': renderRegister,
-  '#/dashboard': renderDashboard
+    '#/login': renderLogin,
+    '#/register': renderRegister,
+    '#/dashboard': renderDashboard
 };
 
 function navigate(hash) { location.hash = hash; }
@@ -76,19 +76,19 @@ function navigate(hash) { location.hash = hash; }
 window.addEventListener('hashchange', () => mount());
 
 async function mount() {
-  const sess = getSession();
-  $('#btnGoLogin').style.display = sess ? 'none' : 'inline-flex';
-  $('#btnLogout').style.display = sess ? 'inline-flex' : 'none';
-  setRoleChip(sess?.role);
-  const hash = location.hash || (sess ? '#/dashboard' : '#/login');
-  const view = routes[hash] || renderNotFound;
-  await view();
+    const sess = getSession();
+    $('#btnGoLogin').style.display = sess ? 'none' : 'inline-flex';
+    $('#btnLogout').style.display = sess ? 'inline-flex' : 'none';
+    setRoleChip(sess?.role);
+    const hash = location.hash || (sess ? '#/dashboard' : '#/login');
+    const view = routes[hash] || renderNotFound;
+    await view();
 }
 
 // --------------- VIEWS ---------------
 async function renderLogin() {
-  const el = document.getElementById('app');
-  el.innerHTML = `
+    const el = document.getElementById('app');
+    el.innerHTML = `
       <div class="grid cols-2">
         <section class="card stack" aria-labelledby="loginTitle">
           <div>
@@ -138,15 +138,14 @@ async function renderLogin() {
         </section>
       </div>`;
 
-  $('#toRegister').addEventListener('click', () => navigate('#/register'));
+    $('#toRegister').addEventListener('click', () => navigate('#/register'));
 
-  $('#formLogin').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const u = $('#usuario').value.trim();
-    const p = $('#senha').value;
-    const remember = $('#remember').checked;
+    $('#formLogin').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const u = $('#usuario').value.trim();
+        const p = $('#senha').value;
+        const remember = $('#remember').checked;
 
-<<<<<<< HEAD
         if (!u || !p) {
           showLoginError('Preencher campos obrigatórios.');
           return;
@@ -196,60 +195,14 @@ async function renderLogin() {
 
     function showLoginError(msg) {
         const box = $('#loginMsg'); box.style.display = 'block'; box.textContent = msg;
-=======
-    const lockUntil = JSON.parse(localStorage.getItem(STORAGE_KEYS.lockout) || '0');
-    const now = Date.now();
-    if (lockUntil && now < lockUntil) {
-      const m = Math.ceil((lockUntil - now) / 60000);
-      showLoginError(`Muitas tentativas. Tente novamente em ${m} min.`);
-      return;
->>>>>>> b3e3eb545c6d81edd695e8bbc98697eb48c2689b
     }
 
-    const btn = $('#btnLogin');
-    const original = btn.innerHTML; btn.disabled = true; btn.innerHTML = '<span class="loader" aria-hidden="true"></span><span> Verificando…</span>';
-    await sleep(600);
-
-    const users = getUsers();
-    const found = users.find(x => (x.username === u || x.email === u) && x.password === p);
-    if (found) {
-      setSession({ username: found.username, role: found.role, email: found.email }, remember);
-      localStorage.removeItem(STORAGE_KEYS.failed);
-      localStorage.removeItem(STORAGE_KEYS.lockout);
-      toast('Login bem-sucedido');
-      navigate('#/dashboard');
-    } else {
-      const failed = (JSON.parse(localStorage.getItem(STORAGE_KEYS.failed) || '0') || 0) + 1;
-      localStorage.setItem(STORAGE_KEYS.failed, JSON.stringify(failed));
-      if (failed >= 5) {
-        const until = Date.now() + 5 * 60 * 1000;
-        localStorage.setItem(STORAGE_KEYS.lockout, JSON.stringify(until));
-        showLoginError('Muitas tentativas. Tente novamente em 5 min.');
-      } else {
-        showLoginError('Usuário ou senha incorretos.');
-      }
-    }
-    btn.disabled = false; btn.innerHTML = original;
-  });
-
-  // Botão de mostrar/ocultar senha
-  $('#toggleSenha').addEventListener('click', () => {
-    const input = $('#senha');
-    const isHidden = input.type === 'password';
-    input.type = isHidden ? 'text' : 'password';
-    $('#toggleSenha').textContent = isHidden ? '🙈' : '👁️';
-  });
-
-  function showLoginError(msg) {
-    const box = $('#loginMsg'); box.style.display = 'block'; box.textContent = msg;
-  }
-
-  $('#usuario').focus();
+    $('#usuario').focus();
 }
 
 async function renderRegister() {
-  const el = document.getElementById('app');
-  el.innerHTML = `
+    const el = document.getElementById('app');
+    el.innerHTML = `
       <div class="layout">
         <nav class="sidemenu">
           <div class="card menu-card" tabindex="0" onclick="location.hash='#/login'">
@@ -277,14 +230,13 @@ async function renderRegister() {
         </section>
       </div>`;
 
-  $('#formReg').addEventListener('submit', (e) => {
-    e.preventDefault();
-    const u = $('#ruser').value.trim();
-    const em = $('#remail').value.trim();
-    const pw = $('#rpass').value;
-    const role = $('#rrole').value;
+    $('#formReg').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const u = $('#ruser').value.trim();
+        const em = $('#remail').value.trim();
+        const pw = $('#rpass').value;
+        const role = $('#rrole').value;
 
-<<<<<<< HEAD
         if (!u || !em || !pw) {
           show('Preencher campos obrigatórios.');
           return;
@@ -294,44 +246,38 @@ async function renderRegister() {
         if (!emailRegex.test(em)) {
           show('E-mail inválido. Verifique se contém "@" e um domínio (ex: usuario@dominio.com).');
           return;
-=======
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(em)) {
-      show('E-mail inválido. Verifique se contém "@" e um domínio (ex: usuario@dominio.com).');
-      return;
->>>>>>> b3e3eb545c6d81edd695e8bbc98697eb48c2689b
     }
 
-    // Validação de senha forte 
-    // Requer: 8+ caracteres, 1 maiúscula (A-Z), 1 número (0-9)
-    const strongPasswordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
-    if (!strongPasswordRegex.test(pw)) {
-      show('A senha deve ter pelo menos 8 caracteres sendo 1 maiúscula e 1 número.'); return;
-    }
+        // Validação de senha forte 
+        // Requer: 8+ caracteres, 1 maiúscula (A-Z), 1 número (0-9)
+        const strongPasswordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
+        if (!strongPasswordRegex.test(pw)) {
+            show('A senha deve ter pelo menos 8 caracteres sendo 1 maiúscula e 1 número.'); return;
+        }
 
-    const users = getUsers();
-    // Verificar duplicidade de email e username
-    if (users.some(x => x.username === u || x.email === em)) {
-      show('E-mail ou usuário já em uso.'); return;
-    }
+        const users = getUsers();
+        // Verificar duplicidade de email e username
+        if (users.some(x => x.username === u || x.email === em)) {
+            show('E-mail ou usuário já em uso.'); return;
+        }
 
-    users.push({ username: u, email: em, password: pw, role });
-    setUsers(users);
-    toast('Cadastro realizado. Faça login.');
-    navigate('#/login');
+        users.push({ username: u, email: em, password: pw, role });
+        setUsers(users);
+        toast('Cadastro realizado. Faça login.');
+        navigate('#/login');
 
-    function show(msg) { const box = $('#regMsg'); box.style.display = 'block'; box.textContent = msg; }
-  });
+        function show(msg) { const box = $('#regMsg'); box.style.display = 'block'; box.textContent = msg; }
+    });
 
-  $('#ruser').focus();
+    $('#ruser').focus();
 }
 
 async function renderDashboard() {
-  const sess = getSession();
-  if (!sess) { navigate('#/login'); return; }
+    const sess = getSession();
+    if (!sess) { navigate('#/login'); return; }
 
-  const el = document.getElementById('app');
-  el.innerHTML = `
+    const el = document.getElementById('app');
+    el.innerHTML = `
         <div class="layout">
           <nav class="sidemenu">
             <div class="card menu-card">
@@ -354,13 +300,13 @@ async function renderDashboard() {
           </section>
         </div>`;
 
-  $('#navProducts').addEventListener('click', renderProducts);
-  $('#navAbout').addEventListener('click', renderAbout);
-  await renderProducts();
+    $('#navProducts').addEventListener('click', renderProducts);
+    $('#navAbout').addEventListener('click', renderAbout);
+    await renderProducts();
 }
 
 async function renderAbout() {
-  $('#view').innerHTML = `
+    $('#view').innerHTML = `
         <section class="card stack">
           <h2>Sobre o Portal Harmonia</h2>
           <ul>
@@ -372,10 +318,10 @@ async function renderAbout() {
 }
 
 async function renderProducts() {
-  const sess = getSession();
-  const role = sess?.role;
-  const container = $('#view');
-  container.innerHTML = `
+    const sess = getSession();
+    const role = sess?.role;
+    const container = $('#view');
+    container.innerHTML = `
         <section class="card stack">
           <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap;">
             <h2>Produtos</h2>
@@ -389,19 +335,19 @@ async function renderProducts() {
           </div>
         </section>`;
 
-  await sleep(500);
-  drawTable();
+    await sleep(500);
+    drawTable();
 
-  // Busca dinâmica (corrigido para 'input' em vez de 'change')
-  $('#q').addEventListener('input', drawTable);
-  $('#new').addEventListener('click', openFormCreate);
+    // Busca dinâmica (corrigido para 'input' em vez de 'change')
+    $('#q').addEventListener('input', drawTable);
+    $('#new').addEventListener('click', openFormCreate);
 
-  function drawTable() {
-    const q = $('#q').value?.toLowerCase() || '';
-    const data = getProducts().filter(p => p.name.toLowerCase().includes(q));
-    const wrap = $('#tableWrap');
-    if (!data.length) { wrap.innerHTML = '<p class="footer-note">Nenhum produto encontrado.</p>'; return; }
-    const rows = data.map(p => `
+    function drawTable() {
+        const q = $('#q').value?.toLowerCase() || '';
+        const data = getProducts().filter(p => p.name.toLowerCase().includes(q));
+        const wrap = $('#tableWrap');
+        if (!data.length) { wrap.innerHTML = '<p class="footer-note">Nenhum produto encontrado.</p>'; return; }
+        const rows = data.map(p => `
           <tr>
             <td>${p.name}</td>
             <td>R$ ${p.price.toFixed(2)}</td>
@@ -411,24 +357,24 @@ async function renderProducts() {
               ${role === 'administrador' ? `<button class="btn danger" data-del="${p.id}">Excluir</button>` : ''}
             </td>
           </tr>`).join('');
-    wrap.innerHTML = `
+        wrap.innerHTML = `
           <table class="table" aria-label="Lista de produtos">
             <thead><tr><th>Nome</th><th>Preço</th><th>Estoque</th><th>Ações</th></tr></thead>
             <tbody>${rows}</tbody>
           </table>`;
-    $$('button[data-edit]').forEach(b => b.addEventListener('click', () => openFormEdit(b.dataset.edit)));
-    $$('button[data-del]').forEach(b => b.addEventListener('click', () => del(b.dataset.del)));
-  }
+        $$('button[data-edit]').forEach(b => b.addEventListener('click', () => openFormEdit(b.dataset.edit)));
+        $$('button[data-del]').forEach(b => b.addEventListener('click', () => del(b.dataset.del)));
+    }
 
-  function openFormCreate() { openForm(); }
-  function openFormEdit(id) {
-    const p = getProducts().find(x => x.id === id); openForm(p);
-  }
+    function openFormCreate() { openForm(); }
+    function openFormEdit(id) {
+        const p = getProducts().find(x => x.id === id); openForm(p);
+    }
 
-  function openForm(prod) {
-    const isEdit = !!prod;
-    const dlg = document.createElement('div');
-    dlg.innerHTML = `
+    function openForm(prod) {
+        const isEdit = !!prod;
+        const dlg = document.createElement('div');
+        dlg.innerHTML = `
           <div class="card stack" style="position:fixed; inset:0; background: rgba(0,0,0,.35); display:grid; place-items:center; padding:16px;">
             <div class="card stack" style="max-width:520px; width:100%;">
               <h3>${isEdit ? 'Editar' : 'Novo'} produto</h3>
@@ -444,37 +390,37 @@ async function renderProducts() {
               <div id="formMsg" class="status error" style="display:none" role="alert" aria-live="assertive"></div>
             </div>
           </div>`;
-    document.body.appendChild(dlg);
-    $('#pname', dlg).focus();
-    $('#cancel', dlg).addEventListener('click', () => dlg.remove());
-    $('#save', dlg).addEventListener('click', async () => {
-      const name = $('#pname', dlg).value.trim();
-      const price = parseFloat($('#pprice', dlg).value);
-      const stock = parseInt($('#pstock', dlg).value, 10);
-      if (!name) { show('Nome é obrigatório.'); return; }
-      // CORREÇÃO: Preço negativo (PDF item 3.2.3). Deve ser >= 0.
-      if (price <= 0 || isNaN(price)) { show('Preço deve ser positivo.'); return; }
-      if (!(Number.isInteger(stock) && stock >= 0)) { show('Estoque deve ser preenchido com numeros sem casas decimal e acima de 0).'); return; }
-      $('#save', dlg).disabled = true; $('#save', dlg).innerHTML = '<span class="loader" aria-hidden="true"></span> Salvando…';
-      await sleep(400);
-      const all = getProducts();
-      if (isEdit) {
-        const idx = all.findIndex(x => x.id === prod.id);
-        all[idx] = { ...all[idx], name, price, stock };
-      } else {
-        all.unshift({ id: crypto.randomUUID(), name, price, stock });
-      }
-      setProducts(all); toast(isEdit ? 'Produto atualizado' : 'Produto criado');
-      dlg.remove(); drawTable();
-      function show(msg) { const m = $('#formMsg', dlg); m.style.display = 'block'; m.textContent = msg; $('#save', dlg).disabled = false; $('#save', dlg).textContent = 'Salvar'; }
-    });
-  }
+        document.body.appendChild(dlg);
+        $('#pname', dlg).focus();
+        $('#cancel', dlg).addEventListener('click', () => dlg.remove());
+        $('#save', dlg).addEventListener('click', async () => {
+            const name = $('#pname', dlg).value.trim();
+            const price = parseFloat($('#pprice', dlg).value);
+            const stock = parseInt($('#pstock', dlg).value, 10);
+            if (!name) { show('Nome é obrigatório.'); return; }
+            // CORREÇÃO: Preço negativo (PDF item 3.2.3). Deve ser >= 0.
+            if (price < 0 || isNaN(price)) { show('Preço deve ser zero ou positivo.'); return; }
+            if (!(Number.isInteger(stock) && stock >= 0)) { show('Estoque deve ser inteiro ≥ 0.'); return; }
+            $('#save', dlg).disabled = true; $('#save', dlg).innerHTML = '<span class="loader" aria-hidden="true"></span> Salvando…';
+            await sleep(400);
+            const all = getProducts();
+            if (isEdit) {
+                const idx = all.findIndex(x => x.id === prod.id);
+                all[idx] = { ...all[idx], name, price, stock };
+            } else {
+                all.unshift({ id: crypto.randomUUID(), name, price, stock });
+            }
+            setProducts(all); toast(isEdit ? 'Produto atualizado' : 'Produto criado');
+            dlg.remove(); drawTable();
+            function show(msg) { const m = $('#formMsg', dlg); m.style.display = 'block'; m.textContent = msg; $('#save', dlg).disabled = false; $('#save', dlg).textContent = 'Salvar'; }
+        });
+    }
 
-  async function del(id) {
-    if (!confirm('Confirma excluir o produto?')) return;
-    const all = getProducts().filter(x => x.id !== id);
-    setProducts(all); toast('Produto removido'); drawTable();
-  }
+    async function del(id) {
+        if (!confirm('Confirma excluir o produto?')) return;
+        const all = getProducts().filter(x => x.id !== id);
+        setProducts(all); toast('Produto removido'); drawTable();
+    }
 }
 
 // --------------- NAV BAR CONTROLS ---------------
