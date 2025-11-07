@@ -122,20 +122,7 @@ async function renderLogin() {
             <div id="loginMsg" class="status error" style="display:none" role="alert" aria-live="assertive"></div>
             <div class="footer-note">Dica: admin/1234 (administrador) • oper/1234 (operacional)</div>
           </form>
-        </section>
-        <section class="card stack" aria-label="Informações">
-          <div class="row" style="align-items:center; gap:12px;">
-            <div class="loader" aria-hidden="true"></div>
-            <div>
-              <strong>Características de usabilidade</strong>
-              <ul>
-                <li>Contraste AA, foco visível e navegação por teclado</li>
-                <li>Feedbacks claros: loaders, toasts e mensagens</li>
-                <li>Layout responsivo (mobile-first)</li>
-              </ul>
-            </div>
-          </div>
-        </section>
+        </section
       </div>`;
 
     $('#toRegister').addEventListener('click', () => navigate('#/register'));
@@ -399,8 +386,8 @@ async function renderProducts() {
             const stock = parseInt($('#pstock', dlg).value, 10);
             if (!name) { show('Nome é obrigatório.'); return; }
             // CORREÇÃO: Preço negativo (PDF item 3.2.3). Deve ser >= 0.
-            if (price < 0 || isNaN(price)) { show('Preço deve ser zero ou positivo.'); return; }
-            if (!(Number.isInteger(stock) && stock >= 0)) { show('Estoque deve ser inteiro ≥ 0.'); return; }
+            if (price <= 0 || isNaN(price)) { show('Preço deve ser zero ou positivo.'); return; }
+            if (!(Number.isInteger(stock) && stock >= 0)) { show('Estoque deve ser inteiro maior que 0.'); return; }
             $('#save', dlg).disabled = true; $('#save', dlg).innerHTML = '<span class="loader" aria-hidden="true"></span> Salvando…';
             await sleep(400);
             const all = getProducts();
